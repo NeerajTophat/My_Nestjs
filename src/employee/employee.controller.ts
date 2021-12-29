@@ -5,7 +5,8 @@ import { extname } from 'path'
 import { Helper } from '../../helper/helper'
 
 import { EmployeeService } from './employee.service'
-import { JwtAuthGuard } from '../jwt-Auth';
+// import { JwtAuthGuard } from '../jwt-Auth';
+import { AuthGuard } from '@nestjs/passport'
 
 @Controller('employees')
 export class EmployeeController {
@@ -74,8 +75,9 @@ export class EmployeeController {
 	}
 
 
-	@UseGuards(JwtAuthGuard)
+	
 	@Get('getAllEmployee')
+	@UseGuards(AuthGuard())
 	async getAllEmployee() {
 		return this.employeeService.getAllEmployee()
 	}

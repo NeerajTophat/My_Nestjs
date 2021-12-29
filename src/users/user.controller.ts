@@ -1,8 +1,11 @@
-import { Controller, Body , Get ,Post ,Res} from '@nestjs/common'
+import { Controller, Body , Get ,Post ,Res, UnauthorizedException, UseGuards} from '@nestjs/common'
 import { userService } from './user.service'
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express'
 import { JwtService } from '@nestjs/jwt'
+import { AuthGuard } from '@nestjs/passport'
+
+import { JwtPayload } from './jwt-payload.interface';
 
 
 @Controller('users')
@@ -25,16 +28,29 @@ export class userController {
 			if(logIn){
 			let match = await bcrypt.compare(completeBody.password, logIn.password)
 			if(match){
-				const payload = logIn.userName
+				let userName = logIn.userName
+				const payload: JwtPayload = { userName }
 				let jwt: string = await this.jwtService.sign(payload)
 				// response.cookie('jwt', jwt, {httpOnly: true});
-				return {status: 1, message:"Login success", data: {userInfo:logIn, token:jwt}}
+				console.log(jwt,"<=======jwt")
+				return jwt;
 			}
 			return {status: 0, message: 'Check Your Password'}
 
 		}else{
 			return {status: 0, message: 'Check Your Email'}
 		}
+	}
+
+	@Post('getAllUser')
+	@UseGuards(AuthGuard())
+	async allUser() {
+		let allUser = await this.userService.allUser()
+		if(!allUser) {
+			throw new UnauthorizedException('User Not Found!')
+
+		}
+		return allUser;
 	}
 
 

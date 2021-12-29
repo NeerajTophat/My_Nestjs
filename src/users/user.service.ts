@@ -29,4 +29,8 @@ export class userService {
 		return await this.userModel.findOne({email: completeBody.email})
 
 	}
+
+	async allUser() {
+		return await this.userModel.find();
+	}
 }
