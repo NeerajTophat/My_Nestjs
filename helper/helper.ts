@@ -9,11 +9,11 @@ export class Helper {
         fileExtension = "png";
     }
     const originalName = file.originalname.split(".")[0];
-    cb(null, originalName + '-' + uniqueSuffix+"."+fileExtension);
+    cb(null,  uniqueSuffix+"."+fileExtension);
   }
  
   static destinationPath(req, file, cb) {
     console.log(file,"<=======")
-    cb(null, './images/')
+    cb(null, 'images/')
   }
 }

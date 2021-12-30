@@ -30,21 +30,22 @@ async getAllEmployee(){
 		return {status: 0, message: "Try Again", data: {}}
 }
 
-async getEmployee(id: string){
-	let getEmployee = await this.employeeModel.findById({id, isDeleted: 0})
+async getEmployee(id: any){
+	let getEmployee = await this.employeeModel.findById({_id: id, isDeleted: 0})
 	if(getEmployee){
-		return {status: 1, message: "Employee Find Success", data: getEmployee}
+		return  getEmployee
 		}
 		return {status: 0, message: "Try Again", data: {}}
 
 }
 
-async updateEmployee(id:string, empName: string, empId: string, empSalary: number){
+async updateEmployee(id:string, empName: string, empId: string, empSalary: number, files){
 	let updatedEmp = await this.employeeModel.findByIdAndUpdate({_id: id,isDeleted: 0},{
 		empName: empName,
 		empId: empId,
-		empSalary: empSalary
-	})
+		empSalary: empSalary,
+		picture: files
+	},{new : true})
 	if(updatedEmp){
 		return {status: 1, message: "Employee Update Success", data: updatedEmp}
 		}

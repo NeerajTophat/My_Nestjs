@@ -83,20 +83,41 @@ export class EmployeeController {
 	}
 
 	@Post('getEmployee')
-	async getEmployee(@Body('empId') eId: string) {
+	async getEmployee(@Body('empId') eId: any) {
 		const emp = await this.employeeService.getEmployee(eId)
-		return {emp}
+		return emp
 
 	}
 
 	@Post('updateEmployee')
+		  @UseInterceptors(FilesInterceptor('picture',10, {
+			storage: diskStorage({
+			destination: Helper.destinationPath,
+			filename: Helper.customFileName,
+      }), 
+  }))
+
 	async updateEmployee(
+		@UploadedFiles() files,
 		@Body('employeeId') employeeId: string,
 		@Body('empName') eName : string,
 		@Body('empId') eId : string,
 		@Body('empSalary') eSalary : number
 		) {
-		const updateEmps = await this.employeeService.updateEmployee(employeeId, eName, eId, eSalary)
+			const response = [];
+			files.forEach(file => {
+				const fileReponse = {
+					originalname: file.originalname,
+					filename: file.filename,
+					filePath: file.path,
+					mimetype: file.mimetype,
+					destination: file.destination
+
+
+				};
+				response.push(fileReponse);
+			});
+		const updateEmps = await this.employeeService.updateEmployee(employeeId, eName, eId, eSalary,response)
 		return {updateEmps}
 	}
 
@@ -105,7 +126,11 @@ export class EmployeeController {
 		const deleteEmp = await this.employeeService.deleteEmployee(eId)
 		return(deleteEmp)
 	}
+
+
 }
+
+
 
   // @Post('file-upload')
   // @UseInterceptors(FileInterceptor('picture', {
